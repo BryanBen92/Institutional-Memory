@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '../types';
 import { chatService } from '../services/chat';
+import UploadModal from '../components/UploadModal';
 
 const mockMessages: ChatMessage[] = [
   {
@@ -22,6 +23,7 @@ const Chat: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>(mockMessages);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -146,7 +148,11 @@ const Chat: React.FC = () => {
                     <div className="relative group">
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/30 to-purple-500/30 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
                         <div className="relative flex items-center bg-surface border border-border rounded-xl p-2 shadow-xl focus-within:border-primary transition-colors">
-                            <button className="p-2 text-text-secondary hover:text-white transition-colors shrink-0">
+                            <button 
+                              onClick={() => setIsUploadOpen(true)}
+                              className="p-2 text-text-secondary hover:text-white transition-colors shrink-0"
+                              title="Attach document"
+                            >
                                 <span className="material-symbols-outlined text-[20px]">attach_file</span>
                             </button>
                             <input
@@ -183,6 +189,11 @@ const Chat: React.FC = () => {
                 <span className="material-symbols-outlined text-[20px]">history</span>
             </div>
         </div>
+
+        <UploadModal 
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+        />
     </div>
   );
 };

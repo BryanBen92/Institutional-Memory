@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Document } from '../types';
 import { documentService } from '../services/documents';
+import UploadModal from '../components/UploadModal';
 
 const StatCard: React.FC<{ label: string; value: string; trend?: string; trendUp?: boolean; icon: string; color: string }> = ({ label, value, trend, trendUp, icon, color }) => (
   <div className="bg-surface border border-border rounded-xl p-5 md:p-6 relative overflow-hidden group hover:border-primary/50 transition-colors">
@@ -33,6 +35,8 @@ const Dashboard: React.FC = () => {
     activeUsers: "..."
   });
   const [loading, setLoading] = useState(true);
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -62,7 +66,19 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto h-full overflow-y-auto">
+    <>
+      <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto h-full overflow-y-auto">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-white">Dashboard</h1>
+        <button 
+          onClick={() => setIsUploadOpen(true)}
+          className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-primary/20"
+        >
+          <span className="material-symbols-outlined text-[20px]">cloud_upload</span>
+          Upload Documents
+        </button>
+      </div>
+
       {/* Stats Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard label="Total Docs" value={stats.totalDocs} trend="12% this month" trendUp={true} icon="description" color="bg-primary" />
@@ -164,7 +180,17 @@ const Dashboard: React.FC = () => {
             </div>
         </div>
       </div>
-    </div>
+      </div>
+
+      <UploadModal 
+        isOpen={isUploadOpen} 
+        onClose={() => setIsUploadOpen(false)}
+        onUploadComplete={(documents) => {
+          setRecentDocs(prev => [...documents, ...prev]);
+          setIsUploadOpen(false);
+        }}
+      />
+    </>
   );
 };
 

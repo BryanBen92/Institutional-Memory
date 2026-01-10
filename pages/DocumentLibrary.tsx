@@ -1,5 +1,7 @@
 import React from 'react';
+import { useState } from 'react';
 import { Document } from '../types';
+import UploadModal from '../components/UploadModal';
 
 const documents: Document[] = [
   { id: '1', title: 'Q3 Financial Strategy Report', type: 'PDF', date: '2h ago', author: 'Sarah Jenkins', tag: 'Finance', tagColor: 'blue', thumbnail: 'https://picsum.photos/id/10/400/250' },
@@ -13,6 +15,8 @@ const documents: Document[] = [
 ];
 
 const DocumentLibrary: React.FC = () => {
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [docs, setDocs] = useState<Document[]>(documents);
   return (
     <div className="flex h-full">
         {/* Filters Sidebar */}
@@ -77,7 +81,10 @@ const DocumentLibrary: React.FC = () => {
                             <option>Relevance</option>
                         </select>
                     </div>
-                    <button className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-primary/20">
+                    <button 
+                      onClick={() => setIsUploadOpen(true)}
+                      className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-primary/20"
+                    >
                         <span className="material-symbols-outlined text-[20px]">upload_file</span>
                         Upload Document
                     </button>
@@ -85,7 +92,7 @@ const DocumentLibrary: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-                {documents.map((doc) => (
+                {docs.map((doc) => (
                     <div key={doc.id} className="group relative flex flex-col bg-surface border border-border rounded-xl overflow-hidden hover:border-primary/50 hover:shadow-xl transition-all">
                         <div className="relative aspect-video bg-surface-light overflow-hidden">
                             <img src={doc.thumbnail} alt={doc.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
@@ -122,6 +129,15 @@ const DocumentLibrary: React.FC = () => {
                 ))}
             </div>
         </div>
+
+        <UploadModal 
+          isOpen={isUploadOpen}
+          onClose={() => setIsUploadOpen(false)}
+          onUploadComplete={(newDocs) => {
+            setDocs(prev => [...newDocs, ...prev]);
+            setIsUploadOpen(false);
+          }}
+        />
     </div>
   );
 };

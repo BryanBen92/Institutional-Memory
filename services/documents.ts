@@ -39,6 +39,23 @@ export const documentService = {
   },
 
   upload: async (file: File) => {
+    if (CONFIG.IS_DEMO) {
+      // Simulate upload with delay
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            id: Math.random().toString(36).substr(2, 9),
+            title: file.name,
+            type: file.type.includes('pdf') ? 'PDF' : file.type.includes('word') ? 'DOCX' : 'TXT',
+            date: 'now',
+            author: 'You',
+            tag: 'Recent',
+            tagColor: 'blue' as any,
+            thumbnail: `https://picsum.photos/id/${Math.floor(Math.random() * 100)}/400/250`
+          });
+        }, 2000);
+      });
+    }
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/documents/upload', formData);
