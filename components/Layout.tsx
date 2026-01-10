@@ -7,11 +7,14 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const getTitle = () => {
     switch(location.pathname) {
-      case '/': return 'Dashboard';
+      case '/dashboard': return 'Dashboard';
       case '/documents': return 'Document Library';
       case '/chat': return 'AI Lab';
       case '/settings': return 'Settings';
       case '/uploads': return 'Uploads';
+      case '/team': return 'Team Management';
+      case '/notifications': return 'Notifications';
+      case '/profile': return 'My Profile';
       default: return 'Institutional Memory';
     }
   };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '../types';
+import { chatService } from '../services/chat';
 
 const mockMessages: ChatMessage[] = [
   {
@@ -31,7 +32,7 @@ const Chat: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
     const newMessage: ChatMessage = {
@@ -45,17 +46,19 @@ const Chat: React.FC = () => {
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'ai',
-        content: "I'm analyzing your request against the knowledge base. Here is a simulated response based on the available documents regarding that topic.",
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, aiResponse]);
-      setIsTyping(false);
-    }, 1500);
+    try {
+        const response = await chatService.sendMessage(newMessage.content, messages);
+        setMessages(prev => [...prev, response]);
+    } catch (error) {
+        setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            role: 'ai',
+            content: "Sorry, I'm having trouble connecting to the network right now.",
+            timestamp: new Date()
+        }]);
+    } finally {
+        setIsTyping(false);
+    }
   };
 
   return (

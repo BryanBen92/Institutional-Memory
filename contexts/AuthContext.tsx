@@ -1,42 +1,78 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { User } from '../types';
+import { authService } from '../services/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { name: string; email: string; role: string } | null;
-  login: (email: string) => void;
+  user: User | null;
+  login: (email: string, password?: string) => Promise<void>;
+  signup: (data: any) => Promise<void>;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Check local storage for persistence or default to false
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('instimem_auth') === 'true';
-  });
-  
-  const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(() => {
-     const stored = localStorage.getItem('instimem_user');
-     return stored ? JSON.parse(stored) : null;
-  });
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const login = (email: string) => {
-    setIsAuthenticated(true);
-    const mockUser = { name: 'Alex Rivera', email, role: 'Admin' };
-    setUser(mockUser);
-    localStorage.setItem('instimem_auth', 'true');
-    localStorage.setItem('instimem_user', JSON.stringify(mockUser));
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('instimem_token');
+      if (token) {
+        try {
+          const userData = await authService.getCurrentUser();
+          setUser(userData);
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Failed to restore session", error);
+          localStorage.removeItem('instimem_token');
+          localStorage.removeItem('instimem_user');
+        }
+      }
+      setIsLoading(false);
+    };
+    initAuth();
+  }, []);
+
+  const login = async (email: string, password = 'password') => {
+    try {
+        const response = await authService.login(email, password);
+        localStorage.setItem('instimem_token', response.token);
+        // For demo persistence without backend
+        localStorage.setItem('instimem_user', JSON.stringify(response.user));
+        
+        setUser(response.user);
+        setIsAuthenticated(true);
+    } catch (error) {
+        throw error;
+    }
+  };
+
+  const signup = async (data: any) => {
+    try {
+        const response = await authService.signup(data);
+        localStorage.setItem('instimem_token', response.token);
+        localStorage.setItem('instimem_user', JSON.stringify(response.user));
+        setUser(response.user);
+        setIsAuthenticated(true);
+    } catch (error) {
+        throw error;
+    }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('instimem_auth');
+    localStorage.removeItem('instimem_token');
     localStorage.removeItem('instimem_user');
+    window.location.hash = '/login';
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, signup, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC<{ title: string }> = ({ title }) => {
+  const navigate = useNavigate();
+
   return (
     <header className="h-16 border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-40 px-8 flex items-center justify-between">
       <h2 className="font-display text-xl font-bold text-white">{title}</h2>
@@ -22,7 +25,10 @@ const Header: React.FC<{ title: string }> = ({ title }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:bg-surface-light hover:text-white transition-colors relative">
+          <button 
+            onClick={() => navigate('/notifications')}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-text-secondary hover:bg-surface-light hover:text-white transition-colors relative"
+          >
             <span className="material-symbols-outlined text-[22px]">notifications</span>
             <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
           </button>

@@ -1,11 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Document } from '../types';
-
-const recentDocs: Document[] = [
-  { id: '1', title: 'Q3 Financial Strategy.pdf', type: 'PDF', date: '2h ago', author: 'Finance', tag: 'Finance', tagColor: 'blue', thumbnail: 'https://picsum.photos/id/1/400/250' },
-  { id: '2', title: 'Engineering Architecture Wiki', type: 'DOCX', date: '5h ago', author: 'Engineering', tag: 'Engineering', tagColor: 'purple', thumbnail: 'https://picsum.photos/id/2/400/250' },
-  { id: '3', title: 'Project Alpha Specs', type: 'LINK', date: '1d ago', author: 'Product', tag: 'Product', tagColor: 'orange', thumbnail: 'https://picsum.photos/id/3/400/250' },
-];
+import { documentService } from '../services/documents';
 
 const StatCard: React.FC<{ label: string; value: string; trend?: string; trendUp?: boolean; icon: string; color: string }> = ({ label, value, trend, trendUp, icon, color }) => (
   <div className="bg-surface border border-border rounded-xl p-6 relative overflow-hidden group hover:border-primary/50 transition-colors">
@@ -30,14 +25,50 @@ const StatCard: React.FC<{ label: string; value: string; trend?: string; trendUp
 );
 
 const Dashboard: React.FC = () => {
+  const [recentDocs, setRecentDocs] = useState<Document[]>([]);
+  const [stats, setStats] = useState<any>({
+    totalDocs: "...",
+    questionsAnswered: "...",
+    aiAccuracy: "...",
+    activeUsers: "..."
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDashboardData = async () => {
+      try {
+        const [docsData, statsData] = await Promise.all([
+          documentService.getRecent(),
+          documentService.getStats()
+        ]);
+        setRecentDocs(docsData);
+        setStats(statsData);
+      } catch (error) {
+        console.error("Failed to load dashboard data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDashboardData();
+  }, []);
+
+  if (loading) {
+      return (
+          <div className="flex items-center justify-center h-full text-primary">
+              <span className="material-symbols-outlined animate-spin text-4xl">autorenew</span>
+          </div>
+      );
+  }
+
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto">
+    <div className="p-8 space-y-8 max-w-7xl mx-auto h-full overflow-y-auto">
       {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard label="Total Docs" value="1,284" trend="12% this month" trendUp={true} icon="description" color="bg-primary" />
-        <StatCard label="Questions Answered" value="452" trend="5.2%" trendUp={true} icon="chat_bubble" color="bg-purple-600" />
-        <StatCard label="AI Accuracy" value="94.2%" trend="Optimized" trendUp={true} icon="auto_awesome" color="bg-emerald-600" />
-        <StatCard label="Active Users" value="128" trend="3 online now" trendUp={true} icon="group" color="bg-orange-500" />
+        <StatCard label="Total Docs" value={stats.totalDocs} trend="12% this month" trendUp={true} icon="description" color="bg-primary" />
+        <StatCard label="Questions Answered" value={stats.questionsAnswered} trend="5.2%" trendUp={true} icon="chat_bubble" color="bg-purple-600" />
+        <StatCard label="AI Accuracy" value={stats.aiAccuracy} trend="Optimized" trendUp={true} icon="auto_awesome" color="bg-emerald-600" />
+        <StatCard label="Active Users" value={stats.activeUsers} trend="3 online now" trendUp={true} icon="group" color="bg-orange-500" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

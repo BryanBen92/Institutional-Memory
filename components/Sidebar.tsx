@@ -1,9 +1,9 @@
 import React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { NavItem } from '../types';
 
 const navItems: NavItem[] = [
-  { icon: 'dashboard', label: 'Dashboard', path: '/' },
+  { icon: 'dashboard', label: 'Dashboard', path: '/dashboard' },
   { icon: 'description', label: 'Documents', path: '/documents' },
   { icon: 'chat', label: 'AI Chat', path: '/chat' },
   { icon: 'group', label: 'Team', path: '/team' },
@@ -13,6 +13,7 @@ const navItems: NavItem[] = [
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <aside className="w-64 bg-background border-r border-border flex flex-col h-screen shrink-0 sticky top-0">
@@ -72,15 +73,18 @@ const Sidebar: React.FC = () => {
 
       {/* User Profile */}
       <div className="p-4 border-t border-border">
-        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-light cursor-pointer transition-colors">
-          <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden">
+        <div 
+          onClick={() => navigate('/profile')}
+          className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-light cursor-pointer transition-colors group"
+        >
+          <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden group-hover:border-primary transition-colors">
              <img src="https://picsum.photos/id/64/200/200" alt="User" className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate">Alex Rivera</p>
+            <p className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">Alex Rivera</p>
             <p className="text-xs text-text-secondary truncate">alex@instimem.ai</p>
           </div>
-          <span className="material-symbols-outlined text-text-secondary text-[20px]">more_vert</span>
+          <span className="material-symbols-outlined text-text-secondary text-[20px]">chevron_right</span>
         </div>
       </div>
     </aside>

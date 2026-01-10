@@ -36,4 +36,30 @@ export interface User {
   avatar: string;
   role: UserRole;
   email: string;
+  department?: string;
+  location?: string;
+  joinedDate?: string;
+}
+
+export interface TeamMember extends User {
+  status: 'Active' | 'Pending' | 'Offline';
+  lastActive: string;
+}
+
+export interface Notification {
+  id: string;
+  type: 'system' | 'mention' | 'document' | 'alert';
+  title: string;
+  description: string;
+  time: string;
+  read: boolean;
+  link?: string;
+}
+
+export interface ActivityLog {
+  id: string;
+  action: string;
+  target: string;
+  timestamp: string;
+  icon: string;
 }
