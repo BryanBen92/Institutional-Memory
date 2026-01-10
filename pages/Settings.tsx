@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 type SettingsTab = 'general' | 'security' | 'billing' | 'notifications';
 
 const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
+  const { logout } = useAuth();
 
   return (
     <div className="flex h-full">
@@ -41,7 +43,7 @@ const Settings: React.FC = () => {
             </button>
 
             <div className="mt-auto border-t border-border pt-4">
-                 <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors">
+                 <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-bold text-red-400 hover:bg-red-500/10 hover:text-red-500 transition-colors">
                     <span className="material-symbols-outlined">logout</span>
                     Sign Out
                 </button>

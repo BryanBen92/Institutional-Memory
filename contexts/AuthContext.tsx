@@ -68,7 +68,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null);
     localStorage.removeItem('instimem_token');
     localStorage.removeItem('instimem_user');
-    window.location.hash = '/login';
+    window.location.hash = '/';
   };
 
   return (

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { useLocation } from 'react-router-dom';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
+
   const getTitle = () => {
     switch(location.pathname) {
       case '/dashboard': return 'Dashboard';
@@ -21,10 +23,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-background text-text">
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       <div className="flex-1 flex flex-col min-w-0">
-        <Header title={getTitle()} />
-        <main className="flex-1 overflow-hidden relative">
+        <Header 
+          title={getTitle()} 
+          onMenuClick={() => setIsSidebarOpen(true)} 
+        />
+        <main className="flex-1 overflow-hidden relative w-full">
           {children}
         </main>
       </div>

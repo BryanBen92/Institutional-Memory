@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { NavItem } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 
 const navItems: NavItem[] = [
   { icon: 'dashboard', label: 'Dashboard', path: '/dashboard' },
@@ -11,21 +12,47 @@ const navItems: NavItem[] = [
   { icon: 'settings', label: 'Settings', path: '/settings' },
 ];
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleNavClick = () => {
+    // Close sidebar on mobile when a link is clicked
+    if (window.innerWidth < 1024) {
+      onClose();
+    }
+  };
 
   return (
-    <aside className="w-64 bg-background border-r border-border flex flex-col h-screen shrink-0 sticky top-0">
+    <aside className={`
+      fixed lg:static inset-y-0 left-0 z-50
+      w-64 bg-background border-r border-border flex flex-col h-full shrink-0
+      transform transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none
+      ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+    `}>
       {/* Logo */}
-      <div className="p-6 flex items-center gap-3">
-        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
-          <span className="material-symbols-outlined text-[20px]">database</span>
+      <div className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-primary/20">
+            <span className="material-symbols-outlined text-[20px]">database</span>
+          </div>
+          <div>
+            <h1 className="font-display font-bold text-lg leading-tight">InstiMem</h1>
+            <p className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Enterprise Plan</p>
+          </div>
         </div>
-        <div>
-          <h1 className="font-display font-bold text-lg leading-tight">InstiMem</h1>
-          <p className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Enterprise Plan</p>
-        </div>
+        <button 
+          onClick={onClose}
+          className="lg:hidden text-text-secondary hover:text-white transition-colors"
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
       </div>
 
       {/* Navigation */}
@@ -37,6 +64,7 @@ const Sidebar: React.FC = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              onClick={handleNavClick}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
                 isActive
                   ? 'bg-primary/10 text-primary'
@@ -71,21 +99,31 @@ const Sidebar: React.FC = () => {
         </div>
       </nav>
 
-      {/* User Profile */}
-      <div className="p-4 border-t border-border">
+      {/* User Profile & Sign Out */}
+      <div className="p-4 border-t border-border flex items-center gap-1">
         <div 
-          onClick={() => navigate('/profile')}
-          className="flex items-center gap-3 p-2 rounded-xl hover:bg-surface-light cursor-pointer transition-colors group"
+          onClick={() => {
+            navigate('/profile');
+            handleNavClick();
+          }}
+          className="flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-surface-light cursor-pointer transition-colors group min-w-0"
         >
-          <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden group-hover:border-primary transition-colors">
-             <img src="https://picsum.photos/id/64/200/200" alt="User" className="w-full h-full object-cover" />
+          <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center overflow-hidden group-hover:border-primary transition-colors shrink-0">
+             <img src={user?.avatar || "https://picsum.photos/id/64/200/200"} alt={user?.name || "User"} className="w-full h-full object-cover" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">Alex Rivera</p>
-            <p className="text-xs text-text-secondary truncate">alex@instimem.ai</p>
+            <p className="text-sm font-bold text-white truncate group-hover:text-primary transition-colors">{user?.name || "Alex Rivera"}</p>
+            <p className="text-xs text-text-secondary truncate">{user?.email || "alex@instimem.ai"}</p>
           </div>
-          <span className="material-symbols-outlined text-text-secondary text-[20px]">chevron_right</span>
         </div>
+        
+        <button 
+            onClick={logout}
+            className="p-2 text-text-secondary hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            title="Sign Out"
+        >
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+        </button>
       </div>
     </aside>
   );

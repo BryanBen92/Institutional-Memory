@@ -22,20 +22,20 @@ const Team: React.FC = () => {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto h-full overflow-y-auto">
+    <div className="p-4 md:p-8 max-w-7xl mx-auto h-full overflow-y-auto">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white">Team Management</h1>
-          <p className="text-text-secondary mt-1">Manage access roles and workspace collaborators.</p>
+          <h1 className="text-2xl md:text-3xl font-display font-bold text-white">Team Management</h1>
+          <p className="text-text-secondary mt-1 text-sm md:text-base">Manage access roles and workspace collaborators.</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-primary/20">
+        <button className="flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 w-full md:w-auto">
           <span className="material-symbols-outlined">person_add</span>
           Invite Member
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
          <div className="bg-surface border border-border p-5 rounded-xl">
              <div className="flex justify-between items-start">
                  <div>
@@ -75,78 +75,82 @@ const Team: React.FC = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="flex items-center gap-4 mb-6 overflow-x-auto pb-2">
-        {['All', 'Active', 'Pending', 'Admins'].map((f) => (
-            <button 
-                key={f} 
-                onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors ${filter === f ? 'bg-white text-background' : 'bg-surface border border-border text-text-secondary hover:text-white'}`}
-            >
-                {f}
-            </button>
-        ))}
-        <div className="flex-1"></div>
+      <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 mb-6">
+        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+            {['All', 'Active', 'Pending', 'Admins'].map((f) => (
+                <button 
+                    key={f} 
+                    onClick={() => setFilter(f)}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-colors whitespace-nowrap ${filter === f ? 'bg-white text-background' : 'bg-surface border border-border text-text-secondary hover:text-white'}`}
+                >
+                    {f}
+                </button>
+            ))}
+        </div>
+        <div className="flex-1 hidden md:block"></div>
         <div className="relative">
             <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-secondary text-[20px]">search</span>
             <input 
                 type="text" 
                 placeholder="Search team..." 
-                className="pl-10 pr-4 py-2 bg-surface border border-border rounded-lg text-white placeholder-text-secondary focus:outline-none focus:border-primary text-sm w-64"
+                className="pl-10 pr-4 py-2 bg-surface border border-border rounded-lg text-white placeholder-text-secondary focus:outline-none focus:border-primary text-sm w-full md:w-64"
             />
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-surface border border-border rounded-xl overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-surface-light text-xs font-bold text-text-secondary uppercase tracking-wider">
-            <tr>
-              <th className="px-6 py-4">User</th>
-              <th className="px-6 py-4">Role</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Last Active</th>
-              <th className="px-6 py-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {members.map((member) => (
-              <tr key={member.id} className="hover:bg-white/5 transition-colors group">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
-                    <div>
-                      <p className="font-bold text-white text-sm">{member.name}</p>
-                      <p className="text-xs text-text-secondary">{member.email}</p>
+      {/* Table Container with Overflow */}
+      <div className="bg-surface border border-border rounded-xl overflow-hidden flex flex-col">
+        <div className="overflow-x-auto">
+            <table className="w-full text-left min-w-[800px]">
+            <thead className="bg-surface-light text-xs font-bold text-text-secondary uppercase tracking-wider">
+                <tr>
+                <th className="px-6 py-4">User</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Last Active</th>
+                <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+                {members.map((member) => (
+                <tr key={member.id} className="hover:bg-white/5 transition-colors group">
+                    <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                        <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
+                        <div>
+                        <p className="font-bold text-white text-sm">{member.name}</p>
+                        <p className="text-xs text-text-secondary">{member.email}</p>
+                        </div>
                     </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      member.role === UserRole.ADMIN 
-                        ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' 
-                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                  }`}>
-                    {member.role}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${getStatusColor(member.status)}`}></div>
-                    <span className="text-sm text-gray-300">{member.status}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-sm text-text-secondary">
-                  {member.lastActive}
-                </td>
-                <td className="px-6 py-4 text-right">
-                  <button className="text-text-secondary hover:text-white p-2 hover:bg-surface-light rounded-lg transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">more_vert</span>
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    </td>
+                    <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        member.role === UserRole.ADMIN 
+                            ? 'bg-purple-500/10 text-purple-400 border-purple-500/20' 
+                            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                    }`}>
+                        {member.role}
+                    </span>
+                    </td>
+                    <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${getStatusColor(member.status)}`}></div>
+                        <span className="text-sm text-gray-300">{member.status}</span>
+                    </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-text-secondary">
+                    {member.lastActive}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                    <button className="text-text-secondary hover:text-white p-2 hover:bg-surface-light rounded-lg transition-colors">
+                        <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                    </button>
+                    </td>
+                </tr>
+                ))}
+            </tbody>
+            </table>
+        </div>
       </div>
     </div>
   );

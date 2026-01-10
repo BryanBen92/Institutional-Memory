@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import { ActivityLog, User } from '../types';
 
 const mockActivity: ActivityLog[] = [
@@ -9,6 +10,7 @@ const mockActivity: ActivityLog[] = [
 ];
 
 const Profile: React.FC = () => {
+  const { logout } = useAuth();
   // Mock User Data
   const user: User = {
       id: '1',
@@ -37,9 +39,15 @@ const Profile: React.FC = () => {
                         <h1 className="text-3xl font-display font-bold text-white">{user.name}</h1>
                         <p className="text-text-secondary">{user.email} • {user.role}</p>
                     </div>
-                    <button className="mb-2 px-4 py-2 bg-surface border border-border rounded-lg text-white font-bold text-sm hover:bg-surface-light transition-colors">
-                        Edit Profile
-                    </button>
+                    <div className="flex gap-3">
+                        <button className="px-4 py-2 bg-surface border border-border rounded-lg text-white font-bold text-sm hover:bg-surface-light transition-colors">
+                            Edit Profile
+                        </button>
+                        <button onClick={logout} className="px-4 py-2 bg-surface border border-red-500/30 rounded-lg text-red-400 font-bold text-sm hover:bg-red-500/10 transition-colors flex items-center gap-2">
+                            <span className="material-symbols-outlined text-[18px]">logout</span>
+                            Sign Out
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

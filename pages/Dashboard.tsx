@@ -3,7 +3,7 @@ import { Document } from '../types';
 import { documentService } from '../services/documents';
 
 const StatCard: React.FC<{ label: string; value: string; trend?: string; trendUp?: boolean; icon: string; color: string }> = ({ label, value, trend, trendUp, icon, color }) => (
-  <div className="bg-surface border border-border rounded-xl p-6 relative overflow-hidden group hover:border-primary/50 transition-colors">
+  <div className="bg-surface border border-border rounded-xl p-5 md:p-6 relative overflow-hidden group hover:border-primary/50 transition-colors">
     <div className="flex justify-between items-start mb-4">
       <span className="text-xs font-bold text-text-secondary uppercase tracking-widest">{label}</span>
       <div className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center text-white`}>
@@ -11,7 +11,7 @@ const StatCard: React.FC<{ label: string; value: string; trend?: string; trendUp
       </div>
     </div>
     <div className="flex items-baseline gap-2">
-      <span className="text-3xl font-display font-bold text-white">{value}</span>
+      <span className="text-2xl md:text-3xl font-display font-bold text-white">{value}</span>
       {trend && (
         <span className={`text-xs font-medium ${trendUp ? 'text-green-400' : 'text-red-400'}`}>
           {trendUp ? '+' : ''}{trend}
@@ -62,24 +62,24 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-8 space-y-8 max-w-7xl mx-auto h-full overflow-y-auto">
+    <div className="p-4 md:p-8 space-y-6 md:space-y-8 max-w-7xl mx-auto h-full overflow-y-auto">
       {/* Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         <StatCard label="Total Docs" value={stats.totalDocs} trend="12% this month" trendUp={true} icon="description" color="bg-primary" />
         <StatCard label="Questions Answered" value={stats.questionsAnswered} trend="5.2%" trendUp={true} icon="chat_bubble" color="bg-purple-600" />
         <StatCard label="AI Accuracy" value={stats.aiAccuracy} trend="Optimized" trendUp={true} icon="auto_awesome" color="bg-emerald-600" />
         <StatCard label="Active Users" value={stats.activeUsers} trend="3 online now" trendUp={true} icon="group" color="bg-orange-500" />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
         {/* Main Feed / Recent Documents */}
         <div className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
-            <h3 className="font-display text-xl font-bold text-white">Recent Documents</h3>
+            <h3 className="font-display text-lg md:text-xl font-bold text-white">Recent Documents</h3>
             <button className="text-sm font-medium text-primary hover:text-white transition-colors">View All</button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
             {recentDocs.map((doc) => (
               <div key={doc.id} className="group flex flex-col bg-surface border border-border rounded-xl overflow-hidden hover:border-primary transition-all cursor-pointer">
                 <div className="relative aspect-video overflow-hidden bg-surface-light">
@@ -100,7 +100,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Activity Chart Placeholder */}
-          <div className="bg-surface border border-border rounded-xl p-6">
+          <div className="bg-surface border border-border rounded-xl p-4 md:p-6">
             <div className="flex items-center justify-between mb-6">
                 <h3 className="font-bold text-white">Active Users Trend</h3>
                 <div className="flex gap-2">
@@ -126,7 +126,7 @@ const Dashboard: React.FC = () => {
 
         {/* Right Sidebar - AI Insights */}
         <div className="space-y-6">
-            <div className="bg-surface border border-border rounded-xl p-6">
+            <div className="bg-surface border border-border rounded-xl p-4 md:p-6">
                 <h3 className="text-sm font-bold text-text-secondary uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-primary text-lg">trending_up</span>
                     Trending Topics
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
                 </div>
             </div>
 
-            <div className="bg-gradient-to-br from-surface to-primary/10 border border-primary/20 rounded-xl p-6 relative overflow-hidden">
+            <div className="bg-gradient-to-br from-surface to-primary/10 border border-primary/20 rounded-xl p-4 md:p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 blur-3xl -mr-10 -mt-10"></div>
                 <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
                     <span className="material-symbols-outlined text-lg">auto_awesome</span>
