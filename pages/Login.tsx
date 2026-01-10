@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [isLoading, isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsLoading(true);
     setError('');
     
     try {
@@ -27,13 +21,9 @@ const Login: React.FC = () => {
     } catch (err: any) {
       setError('Invalid credentials. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
-
-  if (isLoading) {
-    return null; // Or a simple spinner
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden font-display">
@@ -104,10 +94,10 @@ const Login: React.FC = () => {
 
                 <button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                     className="w-full bg-primary hover:bg-primary-hover text-white font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-primary/25 mt-2 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isSubmitting ? (
+                    {isLoading ? (
                         <>
                             <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                             <span>Signing In...</span>
