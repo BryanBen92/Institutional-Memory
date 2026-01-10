@@ -51,12 +51,28 @@ const AppRoutes: React.FC = () => {
   );
 };
 
+const AppWithRouter: React.FC = () => {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center w-screen h-screen bg-[#0F1123]">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  return (
+    <Router>
+      <AppRoutes />
+    </Router>
+  );
+};
+
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <AppWithRouter />
     </AuthProvider>
   );
 };

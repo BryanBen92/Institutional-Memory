@@ -22,7 +22,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background text-text">
+    <div className="flex h-screen overflow-hidden bg-background text-text w-screen">
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
       {/* Mobile Overlay */}

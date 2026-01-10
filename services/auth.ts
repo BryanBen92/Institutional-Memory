@@ -52,7 +52,10 @@ export const authService = {
   getCurrentUser: async (): Promise<User> => {
     if (CONFIG.IS_DEMO) {
        const stored = localStorage.getItem('instimem_user');
-       return stored ? JSON.parse(stored) : null;
+       if (!stored) {
+         throw new Error('No user found');
+       }
+       return JSON.parse(stored);
     }
     return api.get<User>('/auth/me');
   }
